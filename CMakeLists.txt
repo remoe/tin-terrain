@@ -28,21 +28,6 @@ string(TIMESTAMP TNTN_TIMESTAMP "%Y%m%dT%H%MZ" UTC)
 
 
 find_package(GDAL REQUIRED)
-if(NOT GDAL_FOUND)
-    message(FATAL_ERROR "GDAL not found, cannot proceed")
-endif()
-if(NOT GDAL_CONFIG)
-    message(FATAL_ERROR "gdal-config command not found (not in PATH?), cannot proceed")
-endif()
-
-execute_process(
-  COMMAND ${GDAL_CONFIG} --version
-  OUTPUT_VARIABLE SYSTEM_GDAL_VERSION
-)
-
-if(SYSTEM_GDAL_VERSION VERSION_LESS "2.2")
-    message(FATAL_ERROR "GDAL version \"${SYSTEM_GDAL_VERSION}\" is too old, at least 2.2 is required")
-endif()
 
 # Boost
 set(Boost_USE_STATIC_LIBS ON CACHE BOOL "" FORCE)
@@ -55,7 +40,7 @@ find_package(Boost REQUIRED COMPONENTS
 
 include("download-deps.cmake")
 find_path(TNTN_LIBGLM_SOURCE_DIR NAMES "glm/glm.hpp" HINTS "${CMAKE_SOURCE_DIR}/3rdparty/glm-0.9.9.0/")
-find_path(TNTN_LIBFMT_SOURCE_DIR NAMES "include/fmt/format.h" HINTS "${CMAKE_SOURCE_DIR}/3rdparty/fmt-5.1.0/")
+find_path(TNTN_LIBFMT_SOURCE_DIR NAMES "include/fmt/format.h" HINTS "${CMAKE_SOURCE_DIR}/3rdparty/fmt-6.2.1/")
 find_path(TNTN_CATCH2_SOURCE_DIR NAMES "catch.hpp" HINTS "${CMAKE_SOURCE_DIR}/3rdparty/Catch2-2.3.0/")
 
 if(NOT TNTN_LIBGLM_SOURCE_DIR)

@@ -121,9 +121,9 @@ endfunction()
 
 
 download_verify_unpack(
-    "https://github.com/fmtlib/fmt/archive/5.1.0.tar.gz"
-    "${CMAKE_SOURCE_DIR}/3rdparty/libfmt-5.1.0.tar.gz"
-    "b759a718353254fa8cd981e483bf01a45af0fc76901216404ace5e47f5d3edf43d42422184e5413c221e49832322fdf60d1860e8ec87349c674511064b31e5d6"
+    "https://github.com/fmtlib/fmt/archive/6.2.1.tar.gz"
+    "${CMAKE_SOURCE_DIR}/3rdparty/libfmt-6.2.1.tar.gz"
+    "NOHASHCHECK"
 )
 
 download_verify_unpack(

@@ -5,6 +5,13 @@
 #include <errno.h>
 #include <limits>
 
+#ifdef _WIN32
+#    include <io.h>
+#    define ftello _ftelli64
+#else
+#    include <stdio.h>
+#endif
+
 namespace tntn {
 
 static constexpr size_t max_read_write_chunk_size = std::numeric_limits<int>::max();
