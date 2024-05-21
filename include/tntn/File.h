@@ -116,7 +116,8 @@ class File : public FileLike
         OM_R, //read
         OM_RW, //read-write
         OM_RWC, //read-write-create (not overwriting aka exclusive create)
-        OM_RWCF, //read-write, force-create (overwrite when existing)
+        OM_RWCF, //read-write, force-create (overwrite when existing),
+        OM_RWBCF, // binary, read-write, force-create (overwrite when existing)
     };
     bool open(const char* filename, OpenMode open_mode);
     bool open(const std::string& filename, OpenMode open_mode);

@@ -204,7 +204,7 @@ bool write_mesh_as_geojson(const char* filename, const Mesh& m)
 bool write_mesh_as_obj(const char* filename, const Mesh& m)
 {
     File f;
-    if(!f.open(filename, File::OM_RWCF))
+    if(!f.open(filename, File::OM_RWBCF))
     {
         return false;
     }

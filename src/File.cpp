@@ -24,6 +24,7 @@ static const char* openmode_to_fopen_mode(File::OpenMode open_mode)
         case File::OM_RW: return "r+";
         case File::OM_RWC: return "w+x";
         case File::OM_RWCF: return "w+";
+        case File::OM_RWBCF: return "w+b";
         default: return "r";
     }
 }
