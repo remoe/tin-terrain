@@ -261,12 +261,7 @@ bool write_mesh_as_qm(const char* filename,
                       const BBox3D& bbox,
                       bool mesh_is_rescaled)
 {
-    auto f = std::make_shared<File>();
-    if(!f->open(filename, File::OM_RWCF))
-    {
-        TNTN_LOG_ERROR("unable to open quantized mesh file {}", filename);
-        return false;
-    }
+    auto f = std::make_shared<GZipWriteFile>(filename);
     return write_mesh_as_qm(f, m, bbox, mesh_is_rescaled);
 }
 

@@ -1,9 +1,11 @@
 #include "tntn/File.h"
 #include "tntn/logging.h"
+#include "tntn/tntn_assert.h"
 
 #include <cstdio>
 #include <errno.h>
 #include <limits>
+#include <zlib.h>
 
 #ifdef _WIN32
 #    include <io.h>
@@ -351,6 +353,79 @@ bool MemoryFile::write(position_type to_offset_ui64, const unsigned char* data, 
     memcpy(m_data.data() + to_offset, data, data_size);
     return data_size;
 }
+
+const unsigned char* MemoryFile::data() const 
+{
+    return m_data.data();
+}
+
+GZipWriteFile::GZipWriteFile(const std::string& filename) : m_filename(filename) 
+{
+}
+
+GZipWriteFile::~GZipWriteFile() 
+{
+    gzFile file = gzopen(m_filename.c_str(), "w9");
+    {
+        const auto err = errno;
+        if(file == nullptr)
+        {
+            TNTN_LOG_ERROR("gzopen( {} ) = {} errno = {}",
+                           m_filename.c_str(),
+                           file != nullptr,
+                           err);
+            return;
+        }
+        TNTN_LOG_TRACE(
+            "gzopen( {} ) = {} errno = {}", m_filename.c_str(), file != nullptr, err);
+    }
+
+    TNTN_ASSERT(size_t(m_memory_file.m_data.size()) <
+                size_t(std::numeric_limits<unsigned>::max()));
+    const auto compressed_bytes_length =
+        gzwrite(file, voidpc(m_memory_file.data()), unsigned(m_memory_file.size()));
+    TNTN_ASSERT(compressed_bytes_length == int(m_memory_file.size()));
+
+    const auto err = gzclose(file);
+    if(err != Z_OK)
+    {
+        TNTN_LOG_DEBUG("gzclose on {} errno {}", m_filename, err);
+    }
+}
+
+std::string GZipWriteFile::name() const
+{
+    return m_filename;
+}
+
+bool GZipWriteFile::is_good() 
+{
+    return m_memory_file.is_good();
+}
+
+File::position_type GZipWriteFile::size() 
+{
+    return m_memory_file.size();
+}
+
+size_t GZipWriteFile::read(position_type from_offset,
+                           unsigned char* buffer,
+                           size_t size_of_buffer) 
+{
+    return m_memory_file.read(from_offset, buffer, size_of_buffer);
+}
+
+bool GZipWriteFile::write(position_type to_offset,
+                          const unsigned char* data,
+                          size_t data_size) 
+{
+    return m_memory_file.write(to_offset, data, data_size);
+}
+
+void GZipWriteFile::flush() 
+{
+}
+
 
 FileLike::position_type getline(FileLike::position_type from_offset,
                                 FileLike& f,

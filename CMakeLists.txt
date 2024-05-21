@@ -4,7 +4,6 @@ project(tin-terrain)
 
 option(TNTN_TEST "include test targets in the buildsystem" OFF)
 option(TNTN_DOWNLOAD_DEPS "download dependencies during cmake configure" ON)
-#option(TNTN_USE_ADDONS "" OFF)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -38,6 +37,8 @@ find_package(Boost REQUIRED COMPONENTS
     filesystem
     system
 )
+
+find_package(ZLIB REQUIRED)
 
 include("download-deps.cmake")
 find_path(TNTN_LIBGLM_SOURCE_DIR NAMES "glm/glm.hpp" HINTS "${CMAKE_SOURCE_DIR}/3rdparty/glm-0.9.9.0/")
@@ -172,13 +173,6 @@ set(TNTN_SOURCE_FILES
     src/ZemlyaMesh.cpp
 )
 
-if(TNTN_USE_ADDONS)
-    list(APPEND TNTN_SOURCE_FILES
-        include/tntn/Raster2Mesh.h
-        src/Raster2Mesh.cpp
-    )
-endif()
-
 configure_file(src/version_info.cpp.in version_info.cpp)
 
 
@@ -190,10 +184,6 @@ target_compile_definitions(tntn PUBLIC $<$<CONFIG:Debug>:TNTN_DEBUG>)
 
 target_compile_definitions(tntn PUBLIC GLM_FORCE_SWIZZLE GLM_ENABLE_EXPERIMENTAL)
 
-if(TNTN_DOWNLOAD_ADDONS)
-    target_compile_definitions(tntn PUBLIC TNTN_USE_ADDONS=1)
-endif()
-
 target_include_directories(tntn
     PUBLIC
     ${TNTN_LIBGLM_SOURCE_DIR}
@@ -203,12 +193,6 @@ target_include_directories(tntn
     PRIVATE
     ${GDAL_INCLUDE_DIR}
 )
-if(TNTN_USE_ADDONS)
-    target_include_directories(tntn
-        PUBLIC
-        3rdparty/addons/include/
-    )
-endif()
 
 target_link_libraries(tntn
     PUBLIC
@@ -217,6 +201,7 @@ target_link_libraries(tntn
     
     PRIVATE
     ${GDAL_LIBRARY}
+    ZLIB::ZLIB
 )
 
 add_executable(tin-terrain

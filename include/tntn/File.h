@@ -161,9 +161,36 @@ class MemoryFile : public FileLike
 
     void flush() override {}
 
+    const unsigned char* data() const;
+
   private:
     std::vector<unsigned char> m_data;
     bool m_is_good = true;
+};
+
+class GZipWriteFile : public FileLike
+{
+  public:
+    GZipWriteFile(const std::string& filename);
+    ~GZipWriteFile() override;
+
+    std::string name() const override;
+
+    bool is_good() override;
+    position_type size() override;
+
+    size_t read(position_type from_offset, unsigned char* buffer, size_t size_of_buffer) override;
+    bool write(position_type to_offset, const unsigned char* data, size_t data_size) override;
+
+    void flush() override;
+
+    // import convenience overloads
+    using FileLike::read; 
+    using FileLike::write; 
+
+  private:
+    std::string m_filename;
+    MemoryFile m_memory_file;
 };
 
 FileLike::position_type getline(FileLike::position_type from_offset,
